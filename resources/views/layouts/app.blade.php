@@ -12,16 +12,18 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
-<body class="bg-gray-50 text-gray-900 antialiased">
+<body class="bg-emerald-50/40 text-gray-900 antialiased">
 
-    <nav class="bg-white shadow p-4 flex justify-between items-center">
-        <a href="/dashboard" class="font-bold text-green-700">TupaChap</a>
+    <nav class="bg-white border-b border-emerald-100 p-4 flex justify-between items-center shadow-sm">
+        <a href="/dashboard" class="font-bold text-xl text-emerald-800 tracking-tight">TupaChap</a>
         @auth
             <div class="flex items-center gap-4 text-sm">
-                <span>{{ auth()->user()->name }} ({{ auth()->user()->role }})</span>
+                <span class="px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full font-medium capitalize">
+                    {{ auth()->user()->name }} · {{ auth()->user()->role }}
+                </span>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit" class="text-red-600">Log Out</button>
+                    <button type="submit" class="text-red-500 hover:text-red-700 font-medium">Log Out</button>
                 </form>
             </div>
         @endauth
