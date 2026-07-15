@@ -8,11 +8,20 @@
     <div id="track-map" style="height: 350px;" class="rounded border"></div>
 
     @if ($request->status === 'collected')
-        <form action="{{ route('payments.initiate', $request) }}" method="POST" class="mt-4 flex gap-2">
-            @csrf
-            <input type="text" name="phone" placeholder="2547XXXXXXXX" class="border rounded p-2 flex-1">
-            <button class="bg-green-700 text-white px-4 py-2 rounded">Pay with M-Pesa</button>
-        </form>
+        <div class="mt-6 bg-white rounded-2xl border border-emerald-100 p-6 shadow-sm">
+            <p class="text-sm text-emerald-600 mb-3">💳 Collection confirmed — complete payment to finish.</p>
+            <button wire:click="simulatePayment" class="w-full bg-emerald-700 text-white py-3 rounded-xl font-semibold hover:bg-emerald-800">
+                Pay TZS {{ number_format($request->price ?? 5000) }} via Mobile Money
+            </button>
+            <p class="text-xs text-gray-400 mt-2">Demo mode — simulates a successful mobile money confirmation.</p>
+        </div>
+    @endif
+
+    @if ($request->status === 'paid')
+        <div class="mt-6 bg-emerald-50 rounded-2xl border border-emerald-200 p-6 text-center">
+            <p class="text-emerald-800 font-semibold text-lg">✅ Payment Received</p>
+            <p class="text-sm text-emerald-600 mt-1">Reference: {{ $request->payment_reference }}</p>
+        </div>
     @endif
 </div>
 

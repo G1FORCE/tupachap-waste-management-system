@@ -41,6 +41,19 @@ class LiveTrackingMap extends Component
         $this->request->refresh();
     }
 
+	// DEMO MODE: simulates a successful mobile money confirmation.
+    // Real integration (MalipoPay/M-Pesa) is built in MpesaService.php,
+    // but requires sandbox approval - this lets the full flow demo today.
+    public function simulatePayment()
+    {
+        $this->request->update([
+            'status' => 'paid',
+            'payment_reference' => 'DEMO-' . strtoupper(uniqid()),
+        ]);
+
+        broadcast(new \App\Events\RequestStatusUpdated($this->request));
+        $this->request->refresh();
+    }
     public function render()
     {
         return view('livewire.live-tracking-map');
