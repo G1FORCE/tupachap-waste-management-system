@@ -52,9 +52,15 @@ class CollectorDashboard extends Component
     // Objective 2: digital proof-of-service (photo of collected waste)
     public function markCollected(WasteRequest $request)
     {
-        $this->validate(['proofPhoto' => 'required|image|max:5120']);
+        $this->validate([
+            'proofPhoto' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+        ]);
 
-        $path = $this->proofPhoto->store('proof-of-service', 'public');
+        $path = $this->proofPhoto->storePubliclyAs(
+            'proof-of-service',
+            uniqid('proof-', true).'.'.$this->proofPhoto->getClientOriginalExtension(),
+            'public'
+        );
 
         $request->update([
             'status' => 'collected',

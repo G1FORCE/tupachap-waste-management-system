@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\WasteRequest;
 use App\Services\MatchingEngine;
+use Illuminate\Support\Str;
 use Livewire\Component;
 
 /**
@@ -22,24 +23,27 @@ class RequestPickup extends Component
     public ?string $scheduledAt = null;
 
     protected $rules = [
-        'lat' => 'required|numeric',
-        'lng' => 'required|numeric',
-        'wasteType' => 'required|in:general,recyclable,organic,hazardous',
-        'estimatedKg' => 'required|numeric|min:1|max:2000',
-        'type' => 'required|in:on_demand,scheduled',
+        'lat' => ['required', 'numeric', 'between:-90,90'],
+        'lng' => ['required', 'numeric', 'between:-180,180'],
+        'address' => ['nullable', 'string', 'max:255'],
+        'wasteType' => ['required', 'string', 'in:general,recyclable,organic,hazardous'],
+        'estimatedKg' => ['required', 'numeric', 'min:1', 'max:2000'],
+        'type' => ['required', 'string', 'in:on_demand,scheduled'],
+        'scheduledAt' => ['nullable', 'date', 'after_or_equal:now'],
     ];
 
     public function submit(MatchingEngine $matcher)
     {
         $this->validate();
 
+        $sanitizedAddress = trim(strip_tags($this->address));
         $request = WasteRequest::create([
             'user_id' => auth()->id(),
-            'pickup_lat' => $this->lat,
-            'pickup_lng' => $this->lng,
-            'address' => $this->address,
+            'pickup_lat' => round($this->lat, 6),
+            'pickup_lng' => round($this->lng, 6),
+            'address' => Str::limit($sanitizedAddress, 255),
             'waste_type' => $this->wasteType,
-            'estimated_kg' => $this->estimatedKg,
+            'estimated_kg' => round($this->estimatedKg, 2),
             'type' => $this->type,
             'scheduled_at' => $this->type === 'scheduled' ? $this->scheduledAt : null,
         ]);

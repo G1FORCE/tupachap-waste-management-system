@@ -13,8 +13,14 @@ class MpesaController extends Controller
     public function initiate(Request $request, WasteRequest $wasteRequest)
     {
         $validated = $request->validate([
-            'phone' => 'required|string|regex:/^2547[0-9]{8}$/', // 2547XXXXXXXX format
+            'phone' => ['required', 'string', 'regex:/^2547[0-9]{8}$/'],
         ]);
+
+        if ($wasteRequest->status === 'paid') {
+            throw ValidationException::withMessages([
+                'phone' => 'This request has already been paid.',
+            ]);
+        }
 
         $result = $this->mpesa->initiatePayment($wasteRequest, $validated['phone']);
 

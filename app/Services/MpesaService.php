@@ -3,8 +3,9 @@
 namespace App\Services;
 
 use App\Models\WasteRequest;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Validation\ValidationException;
 
 /**
  * MpesaService
@@ -78,16 +79,21 @@ class MpesaService
     {
         $stkCallback = $payload['Body']['stkCallback'] ?? [];
         $resultCode = $stkCallback['ResultCode'] ?? 1;
+        $merchantRequestId = $stkCallback['MerchantRequestID'] ?? null;
+        $checkoutRequestId = $stkCallback['CheckoutRequestID'] ?? null;
 
-        // AccountReference was "TupaChap-{id}" - pull the id back out
         $items = collect($stkCallback['CallbackMetadata']['Item'] ?? []);
         $receipt = $items->firstWhere('Name', 'MpesaReceiptNumber')['Value'] ?? null;
 
         if ($resultCode === 0 && $receipt) {
-            // Match this to the correct request using data you stashed
-            // when initiating payment (e.g. session, or store request_id
-            // alongside the checkout request ID returned by initiatePayment).
             WasteRequest::where('payment_reference', null)
+                ->where(function ($query) use ($merchantRequestId, $checkoutRequestId) {
+                    $query->where('payment_reference', null);
+                    if ($merchantRequestId) {
+                        $query->orWhere('payment_reference', 'like', "%{$merchantRequestId}%")
+                            ->orWhere('payment_reference', 'like', "%{$checkoutRequestId}%" );
+                    }
+                })
                 ->latest()
                 ->first()
                 ?->update(['status' => 'paid', 'payment_reference' => $receipt]);
