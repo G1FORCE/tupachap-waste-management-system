@@ -1,6 +1,6 @@
-# TupaChap Web
+# TupaChap Waste Management System
 
-TupaChap is an on-demand waste collection platform for Dar es Salaam, Tanzania. This repository contains the Laravel web application: a public product site and web interfaces for system administrators and waste collection companies. The platform is designed to connect customers with nearby collectors, support transparent pricing and cashless payments, and provide collection accountability.
+TupaChap is an on-demand waste collection platform for Dar es Salaam, Tanzania. This repository contains the Laravel web application: a public product site and web interfaces for system administration, collector management, and customer account services.
 
 ## Features
 
@@ -10,7 +10,7 @@ TupaChap is an on-demand waste collection platform for Dar es Salaam, Tanzania. 
 - API client and WebSocket support for live platform data
 - Account deletion request page for customer and waste-picker roles
 
-The dashboards expect a separately running TupaChap API for authentication and operational data. The local Laravel login submission is currently a placeholder, so the dashboard API integration should not be treated as a complete standalone authentication service.
+The dashboards expect a separately running TupaChap API for authentication and operational data. The local Laravel login submission is currently a placeholder, so the dashboard API integration should be configured through environment variables.
 
 The account deletion page is also demo-only: submitting it saves a request message but does not delete an account.
 
@@ -71,14 +71,14 @@ Alternatively, `composer run dev` starts Laravel, the queue listener, log tailin
 
 ## API Configuration
 
-The frontend uses `https://tupachap-engine.onrender.com` as its default API host and the corresponding `wss://` host for WebSockets. To point the web app at another environment, set these in `.env` before building or running Vite:
+The frontend uses `https://tupachap-engine.onrender.com` as its default API host and the corresponding `wss://` host for WebSockets. To point the web app at another environment, set these in `.env`:
 
 ```dotenv
 VITE_API_URL=https://your-api-host.example
 VITE_WS_URL=wss://your-api-host.example
 ```
 
-The configured API must provide the endpoints and WebSocket events consumed by the dashboards. See [DASHBOARD_IMPLEMENTATION.md](DASHBOARD_IMPLEMENTATION.md) for the integration details and [DASHBOARD_QUICK_START.md](DASHBOARD_QUICK_START.md) for the dashboard feature guide.
+The configured API must provide the endpoints and WebSocket events consumed by the dashboards. See [DASHBOARD_IMPLEMENTATION.md](DASHBOARD_IMPLEMENTATION.md) for the integration details.
 
 ## Tests
 
@@ -107,4 +107,4 @@ Contributions are welcome. Open an issue to discuss a significant change, then s
 
 ## License
 
-This project currently inherits the MIT license declared in `composer.json`. Confirm that this is the intended license for the TupaChap application before publishing or distributing the repository.
+This project is open-source and available under the MIT license.
